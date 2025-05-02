@@ -2,6 +2,8 @@ import cv2
 import time
 import numpy
 
+import emailing
+
 video = cv2.VideoCapture(0)
 
 # Take a photo and save on disk
@@ -13,9 +15,11 @@ def snapshot():
 
 
 first_frame = None
+status_list = []
 
 # Capture video
 while True:
+    status = 0
     check, frame = video.read()
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray_frame_gau = cv2.GaussianBlur(gray_frame, (21, 21), 0)
@@ -39,7 +43,19 @@ while True:
         if cv2.contourArea(contour) < 5000:
             continue
         x, y, w, h = cv2.boundingRect(contour)
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0))
+        rectangle = cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0))
+
+        # Trigger for entering object
+        if rectangle.any():
+            status = 1
+
+    # Monitor the object inside the frame
+    status_list.append(status)
+    status_list = status_list[-2:]
+
+    # Send email when the object exit the frame
+    if status_list[0] == 1 and status_list[1] == 0:
+        emailing.send_email()
     
     cv2.imshow("Video", frame)
 
