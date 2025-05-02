@@ -57,7 +57,11 @@ while True:
     if status_list[0] == 1 and status_list[1] == 0:
         emailing.send_email()
     
+    cv2.putText(img=frame, text="Hanzo Sama", org=(10, 50),
+                fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(20, 20, 150),
+                thickness=2, lineType=cv2.LINE_AA)
     cv2.imshow("Video", frame)
+
 
     key = cv2.waitKey(1)
 
