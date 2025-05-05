@@ -1,18 +1,11 @@
 import cv2
 import time
-import numpy
+# import numpy
+from datetime import datetime
 
 import emailing
 
 video = cv2.VideoCapture(0)
-
-# Take a photo and save on disk
-def snapshot():
-    img_f1 = numpy.array(frame)
-    cv2.imwrite('imgf1.png', img_f1)
-    time.sleep(1)
-    print(check)
-
 
 first_frame = None
 status_list = []
@@ -48,6 +41,9 @@ while True:
         # Trigger for entering object
         if rectangle.any():
             status = 1
+            now = datetime.now()
+            # Take Screenshot
+            cv2.imwrite(f'images/screen_{now.strftime("%H:%M:%S")}.png', frame)
 
     # Monitor the object inside the frame
     status_list.append(status)
@@ -55,11 +51,14 @@ while True:
 
     # Send email when the object exit the frame
     if status_list[0] == 1 and status_list[1] == 0:
-        emailing.send_email()
+        image_path = emailing.image_to_send()
+        emailing.send_email(image_path)
+        emailing.clean_images()
     
     cv2.putText(img=frame, text="Hanzo Sama", org=(10, 50),
                 fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(20, 20, 150),
                 thickness=2, lineType=cv2.LINE_AA)
+                
     cv2.imshow("Video", frame)
 
 
