@@ -7,11 +7,11 @@ host = 'smtp.gmail.com'
 port = 587  # for ssl use 465
 
 SENDER = 'momobitcoin1986@gmail.com'
-PASSWORD = 'xvptszcygczdijar'
+PASSWORD = '******************'
 
 reciever = SENDER
 
-context = ssl.create_default_context()
+
 
 def send_email(image_path):
     email_message = EmailMessage()
@@ -29,6 +29,8 @@ def send_email(image_path):
         smtp_server.login(SENDER, PASSWORD)
         smtp_server.sendmail(SENDER, reciever, email_message.as_string())
 
+    _clean_images()
+
 
 def image_to_send():
     all_images = glob.glob('images/*.png')
@@ -36,7 +38,7 @@ def image_to_send():
     return all_images[index]
 
 
-def clean_images():
+def _clean_images():
     images = glob.glob('images/*.png')
     for image in images:
         os.remove(image)

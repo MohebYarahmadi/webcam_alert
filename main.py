@@ -1,6 +1,6 @@
 import cv2
 import time
-# import numpy
+from threading import Thread
 from datetime import datetime
 
 import emailing
@@ -49,11 +49,13 @@ while True:
     status_list.append(status)
     status_list = status_list[-2:]
 
-    # Send email when the object exit the frame
+    # Send email when the object exit the frame. USE THREADS
     if status_list[0] == 1 and status_list[1] == 0:
         image_path = emailing.image_to_send()
-        emailing.send_email(image_path)
-        emailing.clean_images()
+        # Thread execution
+        email_thread = Thread(target=emailing.send_email, args=(image_path, ))
+        email_thread.daemon = True
+        email_thread.start()
     
     cv2.putText(img=frame, text="Hanzo Sama", org=(10, 50),
                 fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(20, 20, 150),
